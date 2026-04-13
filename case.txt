@@ -1,0 +1,17 @@
+Problema 3 — API Proxy com Rate Limiting e Cache
+
+Construa uma API utilizando Flask ou FastAPI que funcione como um proxy para um backend fictício, com os seguintes requisitos:
+
+    Implementar rate limiting por cliente
+    Implementar cache de respostas
+    Código organizado, legível e documentado
+    Tratamento adequado de erros
+    Instruções claras de execução
+
+
+Passos
+    Setup do projeto
+    Mock do backend
+    ProxyService
+    CacheService
+    RateLimitingService
