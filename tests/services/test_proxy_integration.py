@@ -1,4 +1,5 @@
 import pytest
+from app.services.cache_service import TTLCacheService
 from app.services.proxy_service import ProxyService
 
 
@@ -12,8 +13,8 @@ async def test_forward_request_real_api(non_mocked_hosts):
     """
     Teste de integração real.
     """
-
-    proxy_service = ProxyService(backend_url="https://jsonplaceholder.typicode.com")
+    cache_service = TTLCacheService(max_size=512, default_ttl=60)
+    proxy_service = ProxyService("https://jsonplaceholder.typicode.com", cache_service)
 
     response = await proxy_service.forward_request(
         method="GET", path="/todos/1", headers={}

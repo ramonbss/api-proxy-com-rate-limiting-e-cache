@@ -3,11 +3,13 @@ import httpx
 
 from app.services.proxy_service import ProxyService
 from app.core.exceptions import BackendUnavailableException
+from app.services.cache_service import TTLCacheService
 
 
 @pytest.fixture
 def proxy_service():
-    return ProxyService(backend_url="http://mock-backend")
+    cache_service = TTLCacheService(max_size=512, default_ttl=60)
+    return ProxyService("http://mock-backend", cache_service)
 
 
 @pytest.mark.asyncio
