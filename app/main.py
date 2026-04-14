@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 import json
 
 from app.services.proxy_service import ProxyService
+from app.services.cache_service import TTLCacheService
 from app.core.exceptions import BackendUnavailableException
 
 app = FastAPI(
@@ -12,7 +13,11 @@ app = FastAPI(
 )
 
 # jsonplaceholder é uma api publica usada para testes
-proxy_service = ProxyService(backend_url="https://jsonplaceholder.typicode.com")
+cache_service = TTLCacheService(max_size=512, default_ttl=60)
+proxy_service = ProxyService(
+    backend_url="https://jsonplaceholder.typicode.com",
+    cache_service=cache_service,
+)
 
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
