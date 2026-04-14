@@ -14,3 +14,8 @@
 - Tratar exceções provenientes da conexão com o backend
 - [Nao se aplica]Limpar headers que não fazem sentido após o httpx já ter decodificado (gzip, brotli, etc)
 
+
+## Implementar Cache
+- Utilizar cachetools (TTL e LRU for free)
+- Funcao de hash deterministica (funcao 'hash' python adiciona um 'salt' para randomizar o resultado)
+- logica de hit/miss
