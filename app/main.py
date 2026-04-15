@@ -24,8 +24,6 @@ rate_limiter_service = LimitsRateLimiter(rate_limit_string="10/minute")
 app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter_service)
 app.add_middleware(ClientIdentificationMiddleware)
 
-app.include_router(proxy_router)
-
 
 @app.exception_handler(RateLimitExceededException)
 async def rate_limit_exceeded_handler(
@@ -36,3 +34,11 @@ async def rate_limit_exceeded_handler(
         content={"error": "Too Many Requests", "detail": str(exc)},
         headers={"Retry-After": str(exc.retry_after)},
     )
+
+
+@app.get("/health", tags=["health"])
+def health() -> JSONResponse:
+    return JSONResponse({"status": "ok"})
+
+
+app.include_router(proxy_router)
