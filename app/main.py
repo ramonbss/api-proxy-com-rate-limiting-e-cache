@@ -4,7 +4,10 @@ import json
 
 from app.services.proxy_service import ProxyService
 from app.services.cache_service import TTLCacheService
-from app.core.exceptions import BackendUnavailableException
+from app.services.rate_limiter import LimitsRateLimiter
+from app.middleware.client_id import ClientIdentificationMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
+from app.core.exceptions import BackendUnavailableException, RateLimitExceededException
 
 app = FastAPI(
     title="API Proxy",
@@ -12,12 +15,27 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# jsonplaceholder é uma api publica usada para testes
 cache_service = TTLCacheService(max_size=512, default_ttl=60)
+rate_limiter_service = LimitsRateLimiter(rate_limit_string="10/minute")
 proxy_service = ProxyService(
     backend_url="https://jsonplaceholder.typicode.com",
     cache_service=cache_service,
 )
+
+# Registra middlewares na ordem inversa de execução. O middleware segue um FILO
+app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter_service)
+app.add_middleware(ClientIdentificationMiddleware)
+
+
+@app.exception_handler(RateLimitExceededException)
+async def rate_limit_exceeded_handler(
+    request: Request, exc: RateLimitExceededException
+):
+    return JSONResponse(
+        status_code=429,
+        content={"error": "Too Many Requests", "detail": str(exc)},
+        headers={"Retry-After": str(exc.retry_after)},
+    )
 
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
