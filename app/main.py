@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 import json
 
@@ -32,7 +32,7 @@ async def rate_limit_exceeded_handler(
     request: Request, exc: RateLimitExceededException
 ):
     return JSONResponse(
-        status_code=429,
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
         content={"error": "Too Many Requests", "detail": str(exc)},
         headers={"Retry-After": str(exc.retry_after)},
     )
@@ -69,9 +69,11 @@ async def proxy_endpoint(path: str, request: Request):
         )
     except BackendUnavailableException as e:
         return JSONResponse(
-            status_code=502, content={"error": "Bad Gateway", "detail": str(e)}
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            content={"error": "Bad Gateway", "detail": str(e)},
         )
     except Exception as e:
         return JSONResponse(
-            status_code=500, content={"error": "Internal Error", "detail": str(e)}
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"error": "Internal Error", "detail": str(e)},
         )
