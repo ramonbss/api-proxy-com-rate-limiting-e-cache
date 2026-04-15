@@ -19,3 +19,11 @@
 - Utilizar cachetools (TTL e LRU for free)
 - Funcao de hash deterministica (funcao 'hash' python adiciona um 'salt' para randomizar o resultado)
 - logica de hit/miss
+
+## Implementar Rate limit
+- Pesquisar sobre rate limit e sua implementação com FastAPI (A lib já deve possuir paradigmas para este mecanismo)
+- Adicionar o rate limiter em um middleware
+- Utilizar lib 'limits'. Boa arquiteutura e parece ser flexivel por meio de injeção de dependência
+- Separar a identificação do Cliente e o Rate limit. A Identificação do cliente não é tão simples
+- [Nao se aplica] Extender a funcionalidade de acesso a API com o rate limiter utilizando decorator ou context management
+- [Nao se aplica] Utilizar sliding window (Evitar lib externa). O Python possui deque. Introduz conceitos de Algoritmos e Estruturas de Dados
